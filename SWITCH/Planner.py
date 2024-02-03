@@ -4,6 +4,8 @@ import pandas as pd
 
 
 
+
+
 # handles history and keeping track of the chat, handles context overflow
 class Chat():
     def __init__(self,maxContext,client):
@@ -80,13 +82,15 @@ class LLMInterface():
     
 
     def parse_response(self,res):
-        res=res.split(" ")
-        cmdNo=int(res[0])
-        if len(res)>1:
-            args=res[1]
-        else:
-            args=None
-        return (cmdNo,args)
+        return res
+
+        # res=res.split(" ")
+        # cmdNo=int(res[0])
+        # if len(res)>1:
+        #     args=res[1]
+        # else:
+        #     args=None
+        # return (cmdNo,args)
 
 
     # status is a dictionary of {variable_name:value}
@@ -116,7 +120,8 @@ class Planner():
         
         llmInterface=LLMInterface(instruction,few_shot,closing)
 
-        res=llmInterface.ask(status)
+        # what is self.model?? needs to be YOLOv5s format
+        res=llmInterface.ask({'model':self.model,'image_processing_time':self.image_process_time,'confidence':self.confidence})
         action = int(res)
                 
         # if( model == 'nano'):
