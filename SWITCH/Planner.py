@@ -1,7 +1,10 @@
 from Execute import Executor
 import pandas as pd
+from openai import OpenAI
 # from Custom_Logger import logger
+from dotenv import load_dotenv
 
+load_dotenv()
 
 
 

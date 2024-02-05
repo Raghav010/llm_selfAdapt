@@ -28,7 +28,7 @@ class Analyzer():
 
 
         # multiple objectives of the system
-        objective='''Here the system objective is to keep the image processing time as low as possible and the confidence as high as possible.'''
+        objective='''Here the system objective is to keep the image processing time below 5 and the confidence as high as possible.'''
         
 
 
