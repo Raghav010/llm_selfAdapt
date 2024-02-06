@@ -88,14 +88,6 @@ class LLMInterface():
     def parse_response(self,res):
         return res
 
-        # res=res.split(" ")
-        # cmdNo=int(res[0])
-        # if len(res)>1:
-        #     args=res[1]
-        # else:
-        #     args=None
-        # return (cmdNo,args)
-
 
     # status is a dictionary of {variable_name:value}
     def ask(self,status):
@@ -113,20 +105,20 @@ class LLMInterface():
 
 
 class Planner():
-    def __init__(self,  monitor_dict ):
-        self.model = monitor_dict["model"] 
-        self.model=self.model[:4].upper()+self.model[4:]
-        self.image_process_time = monitor_dict["image_processing_time"] 
-        self.confidence = monitor_dict["confidence"] 
-        self.utility = monitor_dict["utility"]
+    def __init__(self,closing, instruction, few_shot ):
+        self.llmInterface=LLMInterface(instruction,few_shot,closing)
+        
 
-    def generate_adaptation_plan(self , closing, instruction, few_shot):
+    def generate_adaptation_plan(self ,monitor_dict):
         
-        
-        llmInterface=LLMInterface(instruction,few_shot,closing)
+        model = monitor_dict["model"] 
+        model=model[:4].upper()+model[4:]
+        image_process_time = monitor_dict["image_processing_time"] 
+        confidence = monitor_dict["confidence"] 
+        utility = monitor_dict["utility"]
 
         
-        res=llmInterface.ask({'model':self.model,'image_processing_time':self.image_process_time,'confidence':self.confidence})
+        res=self.llmInterface.ask({'model':model,'image_processing_time':image_process_time,'confidence':confidence})
         action = int(res)
                 
         # if( model == 'nano'):

@@ -15,13 +15,6 @@ class Analyzer():
         self.time = -1
         self.count = 0
 
-
-    def perform_analysis(self,monitor_dict):
-        model = monitor_dict["model"] 
-        image_process_time = monitor_dict["image_processing_time"] 
-        confidence = monitor_dict["confidence"] 
-        utility = monitor_dict["utility"]
-
         # change the system objective?
         # remove MAPE?
         # change set_dimmer to increase_dimmer and decrease_dimmer?
@@ -34,7 +27,7 @@ class Analyzer():
         
 
 
-        instruction=f'You are an adaptation manager for a system handling image processing requests. This system utilizes machine learning models for object detection to process images. Self-adaptive systems are capable of modifying their runtime behavior in order to achieve system objectives. {objective} You being the adapatation manager are responsible for modifying the runtime behavior of the system using the MAPE (Monitor-Analyze-Plan-Execute) model. You will be provided data on the status of the system and you need to analyze to decide if adaption is required and what type of adaptation is needed. You can modify the system by selecting which image processing machine learning model is to be used at that time.\n'
+        self.instruction=f'You are an adaptation manager for a system handling image processing requests. This system utilizes machine learning models for object detection to process images. Self-adaptive systems are capable of modifying their runtime behavior in order to achieve system objectives. {objective} You being the adapatation manager are responsible for modifying the runtime behavior of the system using the MAPE (Monitor-Analyze-Plan-Execute) model. You will be provided data on the status of the system and you need to analyze to decide if adaption is required and what type of adaptation is needed. You can modify the system by selecting which image processing machine learning model is to be used at that time.\n'
 
 
         info='''These are the models that can be used. They are all YOLOv5 models of different sizes.
@@ -52,10 +45,10 @@ class Analyzer():
         image_processing_time - Amount of time from when an image hits the system for detection to the time when the object detection model finishes processing the image and gives output. This time includes model processing time and the time the image had to wait in the queue before before being processed.
         confidence - the confidence with which objects are detected in the image. Indicates how well the model is performing at the task.'''
 
-        instruction+=info
+        self.instruction+=info
 
         # maybe put some of this stuff into instruction?
-        few_shot=['''          
+        self.few_shot=['''          
         Here are a few examples on how you are to interact with the system. Respond with the action number.
 
         Status:
@@ -122,7 +115,7 @@ class Analyzer():
         Answer:''', 
         '''6''']
 
-        closing='''Actions you can take:
+        self.closing='''Actions you can take:
         1. YOLOv5n
         2. YOLOv5s
         3. YOLOv5m
@@ -132,5 +125,12 @@ class Analyzer():
 
         Answer:'''
 
-        planner_obj = Planner(monitor_dict)
-        planner_obj.generate_adaptation_plan(closing, instruction, few_shot)
+        self.planner_obj = Planner(self.closing, self.instruction, self.few_shot)
+
+    def perform_analysis(self,monitor_dict):
+        model = monitor_dict["model"] 
+        image_process_time = monitor_dict["image_processing_time"] 
+        confidence = monitor_dict["confidence"] 
+        utility = monitor_dict["utility"]
+
+        self.planner_obj.generate_adaptation_plan(monitor_dict)

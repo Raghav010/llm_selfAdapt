@@ -186,7 +186,7 @@ class SwimInterface:
 #     print(swimClient.choose_command(cmdNo,args))
 
 
-# handles communication "thread' with an LLM
+# handles communication "thread" with an LLM
 # handles history and keeping track of the chat, handles prompt generation, handles context overflow
 class Chat():
 

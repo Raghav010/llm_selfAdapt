@@ -1,22 +1,12 @@
-from Execute import Executor
-import pandas as pd
 from openai import OpenAI
-# from Custom_Logger import logger
-from dotenv import load_dotenv
-import csv
 
-load_dotenv()
 
-# handles communication "thread' with an LLM
+# handles communication "thread" with an LLM
 # handles history and keeping track of the chat, handles prompt generation, handles context overflow
 class Chat():
 
     # starts the chat off
-    def __init__(self,instruction,few_shot,closing,llm,tuw,logf):
-        self.tuw=tuw
-        self.logf=logf
-        self.callNo=0
-        
+    def __init__(self,instruction,few_shot,closing,llm):
         self.chat=[]
         self.few_shot=few_shot
         self.instruction=instruction
@@ -61,14 +51,17 @@ class Chat():
                 tokenCount=0
 
         print(f'{role}--->{content}')
-        self.logf.write(f'{role}--->{content}\n')
         print(f'TOKENS USED: {tokenCount}')
-        self.callNo+=1
-        self.tuw.writerow([self.callNo,tokenCount])
 
     # parses the llm response
     def parse_response(self,res):
-        return res
+        res=res.split(" ")
+        cmdNo=int(res[0])
+        if len(res)>1:
+            args=res[1]
+        else:
+            args=None
+        return (cmdNo,args)
     
     # llm related functions---------------
 
@@ -110,43 +103,3 @@ class LLMInterface():
         )
         return res
         
-
-
-
-class Planner():
-    def __init__(self, closing, instruction, few_shot):
-        tuf=open('tokenUsage.csv','w')
-        tuwriter=csv.writer(tuf, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-        tuwriter.writerow(['CallNumber','TokensUsed'])
-        logf=open('logs.txt','w')
-        self.llmInterface=LLMInterface()
-        self.chat=Chat(instruction,few_shot,closing,self.llmInterface,tuwriter,logf)
-
-    def generate_adaptation_plan(self , monitor_dict):
-        
-        model = monitor_dict["model"] 
-        model=model[:4].upper()+model[4:]
-        image_process_time = monitor_dict["image_processing_time"] 
-        confidence = monitor_dict["confidence"] 
-        utility = monitor_dict["utility"]
-        
-        res=self.chat.standard_prompt({'model':model,'image_processing_time':image_process_time,'confidence':confidence},self.llmInterface)
-        action = int(res)
-                
-        # if( model == 'nano'):
-        #     action = 1
-        # elif( model == "small" ):
-        #     action = 2
-        # elif( model == 'medium' ):
-        #     action = 3
-        # elif( model == 'large' ):
-        #     action = 4  
-        # elif( model == 'xlarge' ):
-        #     action = 5
-        # else:
-        #     # logger.error(    {'Component': "Planner" , "Action": "No adaptation plan generated" }  )
-        #     action = 1
-            
-        #creates Executor object and call's to perform action.
-        exe_obj = Executor()
-        exe_obj.perform_action(action)
