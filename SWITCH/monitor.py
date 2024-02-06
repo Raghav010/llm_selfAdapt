@@ -1,5 +1,5 @@
 
-from Analyzer_ada import Analyzer
+from Analyzer import Analyzer
 import time
 import pandas as pd
 from elasticsearch import Elasticsearch

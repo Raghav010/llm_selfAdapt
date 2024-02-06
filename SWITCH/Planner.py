@@ -3,6 +3,7 @@ import pandas as pd
 from openai import OpenAI
 # from Custom_Logger import logger
 from dotenv import load_dotenv
+import csv
 
 load_dotenv()
 
@@ -114,6 +115,7 @@ class LLMInterface():
 class Planner():
     def __init__(self,  monitor_dict ):
         self.model = monitor_dict["model"] 
+        self.model=self.model[:4].upper()+self.model[4:]
         self.image_process_time = monitor_dict["image_processing_time"] 
         self.confidence = monitor_dict["confidence"] 
         self.utility = monitor_dict["utility"]
@@ -123,7 +125,7 @@ class Planner():
         
         llmInterface=LLMInterface(instruction,few_shot,closing)
 
-        # what is self.model?? needs to be YOLOv5s format
+        
         res=llmInterface.ask({'model':self.model,'image_processing_time':self.image_process_time,'confidence':self.confidence})
         action = int(res)
                 

@@ -1,6 +1,6 @@
 #determine if the systems needs adaption. Checks if the parameters/ thresholds
 #are been crosed ...........
-from Planner_ada import Planner
+from Planner import Planner
 import pandas as pd
 import time
 import numpy as np
@@ -27,16 +27,17 @@ class Analyzer():
         # change set_dimmer to increase_dimmer and decrease_dimmer?
 
 
+        targetTime=1
+
         # multiple objectives of the system
-        objective='''Here the system objective is to keep the image processing time below 5 and the confidence as high as possible.'''
+        objective=f'Here the system objective is to keep the image processing time below {targetTime} and the confidence as high as possible.'
         
 
 
-        instruction=f'You are an adaptation manager for a system handling image processing requests. This system utilizes machine learning models for object detection to process images. Self-adaptive systems are capable of modifying their runtime behavior in order to achieve system objectives. {objective} You being the adapatation manager are responsible for modifying the runtime behavior of the system using the MAPE (Monitor-Analyze-Plan-Execute) model. You will be provided data on the status of the system and you need to analyze to decide if adaption is required and what type of adaptation is needed. You can modify the system by selecting which image processing machine learning model is to be used at that time.'
+        instruction=f'You are an adaptation manager for a system handling image processing requests. This system utilizes machine learning models for object detection to process images. Self-adaptive systems are capable of modifying their runtime behavior in order to achieve system objectives. {objective} You being the adapatation manager are responsible for modifying the runtime behavior of the system using the MAPE (Monitor-Analyze-Plan-Execute) model. You will be provided data on the status of the system and you need to analyze to decide if adaption is required and what type of adaptation is needed. You can modify the system by selecting which image processing machine learning model is to be used at that time.\n'
 
 
-        # maybe put some of this stuff into instruction?
-        few_shot=['''These are the models that can be used. They are all YOLOv5 models of different sizes.
+        info='''These are the models that can be used. They are all YOLOv5 models of different sizes.
             Models -
                 YOLOv5n - Speed: 6.3, Performance: 45.7
                 YOLOv5s - Speed: 6.4, Performance: 56.8
@@ -49,16 +50,50 @@ class Analyzer():
         Performance - how well the model performs at the ML image processing task. Higher this value, better the model
         model - name of the model in use currently 
         image_processing_time - Amount of time from when an image hits the system for detection to the time when the object detection model finishes processing the image and gives output. This time includes model processing time and the time the image had to wait in the queue before before being processed.
-        confidence - the confidence with which objects are detected in the image. Indicates how well the model is performing at the task.
-                  
+        confidence - the confidence with which objects are detected in the image. Indicates how well the model is performing at the task.'''
 
-                            
+        instruction+=info
+
+        # maybe put some of this stuff into instruction?
+        few_shot=['''          
         Here are a few examples on how you are to interact with the system. Respond with the action number.
 
-
         Status:
-        image_processing_time:
-        confidence: 
+        model: YOLOv5s
+        image_processing_time: 0.0449793338775635
+        confidence: 0.668709949805186
+
+        Actions you can take:
+        1. YOLOv5n
+        2. YOLOv5s
+        3. YOLOv5m
+        4. YOLOv5l
+        5. YOLOv5x
+        6. Do nothing
+
+        Answer:''', 
+        '''3''',
+
+        '''Status:
+        model: YOLOv5m
+        image_processing_time: 0.547133684158325
+        confidence: 0.775960832834244
+
+        Actions you can take:
+        1. YOLOv5n
+        2. YOLOv5s
+        3. YOLOv5m
+        4. YOLOv5l
+        5. YOLOv5x
+        6. Do nothing
+
+        Answer:''', 
+        '''6''',
+
+        '''Status:
+        model: YOLOv5m
+        image_processing_time: 0.0742979049682617
+        confidence: 0.714643239974976
 
         Actions you can take:
         1. YOLOv5n
@@ -72,8 +107,9 @@ class Analyzer():
         '''2''',
 
         '''Status:
-        image_processing_time:
-        confidence:
+        model: YOLOv5s
+        image_processing_time: 0.535914182662964
+        confidence: 0.620569974184036
 
         Actions you can take:
         1. YOLOv5n
@@ -84,37 +120,7 @@ class Analyzer():
         6. Do nothing
 
         Answer:''', 
-        '''1 0.5''',
-
-        '''Status:
-        image_processing_time:
-        confidence:
-
-        Actions you can take:
-        1. YOLOv5n
-        2. YOLOv5s
-        3. YOLOv5m
-        4. YOLOv5l
-        5. YOLOv5x
-        6. Do nothing
-
-        Answer:''', 
-        '''1 0.2''',
-
-        '''Status:
-        image_processing_time:
-        confidence:
-
-        Actions you can take:
-        1. YOLOv5n
-        2. YOLOv5s
-        3. YOLOv5m
-        4. YOLOv5l
-        5. YOLOv5x
-        6. Do nothing
-
-        Answer:''', 
-        '''4''']
+        '''6''']
 
         closing='''Actions you can take:
         1. YOLOv5n
