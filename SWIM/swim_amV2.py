@@ -309,7 +309,19 @@ objective7='''Here the primary system objective is to keep the average response 
 
 instruction=f'You are an adpatation manager for a server system handling user requests. Self-adaptive systems are capable of modifying their runtime behavior in order to achieve system objectives. {objective7} You being the adapatation manager are responsible for modifying the runtime behavior of the system using the MAPE (Monitor-Analyze-Plan-Execute) model. You will be provided data on the status of the system and you need to analyze to decide if adaption is required and what type of adaptation is needed. The possible actions you can take to modify the system are adding a server, removing a server and changing the dimmer value.'
 
-few_shot=['''Terminology: 
+info='''Terminology: 
+dimmer - used to control the proportion of responses that include the optional content, with 1 being the setting in which all responses include the optional content, 0 when no one does (i.e., blackout). The value of the dimmer can be thought of as the probability of a response including the optional content, thus taking values in [0..1].
+active_servers - the number of servers that are currently active and processing requests
+max_servers - the maximum number of servers that can be active at any time
+utilization - the proportion of time that all servers are busy processing requests
+average_response_time - the average time taken to process a request
+arrival_rate - the average number of requests arriving per second
+time - the seconds elapsed since the start of the system'''
+
+instruction+=info
+
+
+few_shot_old=['''Terminology: 
 dimmer - used to control the proportion of responses that include the optional content, with 1 being the setting in which all responses include the optional content, 0 when no one does (i.e., blackout). The value of the dimmer can be thought of as the probability of a response including the optional content, thus taking values in [0..1].
 active_servers - the number of servers that are currently active and processing requests
 max_servers - the maximum number of servers that can be active at any time
@@ -393,6 +405,121 @@ Actions you can take:
 
 Answer:''', 
 '''4''']
+
+
+few_shot=['''Here are a few examples on how you are to interact with the system. Respond with the action number. If the action has a parameter like set dimmer respond with action number followed by the dimmer value.
+          
+Status:
+dimmer: 0.8
+active_servers: 2.0
+max_servers: 3.0
+utilization: 0.89261
+avg_response_time: 0.35951825050096935
+arrival_rate: 42.9667
+time: 3000
+ 
+Actions you can take:
+1. Set dimmer
+2. Add server
+3. Remove server
+4. Do nothing
+
+Answer:''',
+'''2''',
+
+
+'''Status:
+dimmer: 0.8
+active_servers: 3.0
+max_servers: 3.0
+utilization: 0.6035
+avg_response_time: 0.309982594190029535
+arrival_rate: 62.7333
+time: 3200
+
+Actions you can take:
+1. Set dimmer
+2. Add server
+3. Remove server
+4. Do nothing
+
+Answer:''',
+'''1 0.6''',
+
+'''Status:
+dimmer: 0.6
+active_servers: 3.0
+max_servers: 3.0
+utilization: 0.6435
+avg_response_time: 0.289982594190029535
+arrival_rate: 63.4167
+time: 3400
+
+Actions you can take:
+1. Set dimmer
+2. Add server
+3. Remove server
+4. Do nothing
+
+Answer:''',
+'''4''',
+
+'''Status:
+dimmer: 0.6
+active_servers: 3.0
+max_servers: 3.0
+utilization: 0.5085791
+avg_response_time: 0.199982594190029535
+arrival_rate: 42.05
+time: 3600
+
+Actions you can take:
+1. Set dimmer
+2. Add server
+3. Remove server
+4. Do nothing
+
+Answer:''',
+'''1 0.8''',
+
+
+'''Status:
+dimmer: 0.8
+active_servers: 3.0
+max_servers: 3.0
+utilization: 0.5396726
+avg_response_time: 0.209982594190029535
+arrival_rate: 32.5167
+time: 3800
+
+Actions you can take:
+1. Set dimmer
+2. Add server
+3. Remove server
+4. Do nothing
+
+Answer:''',
+'''3''',
+
+
+'''Status:
+dimmer: 0.8
+active_servers: 2.0
+max_servers: 3.0
+utilization: 0.538817
+avg_response_time: 0.2282594190029535
+arrival_rate: 46.45
+time: 4000
+
+Actions you can take:
+1. Set dimmer
+2. Add server
+3. Remove server
+4. Do nothing
+
+Answer:''',
+'''4''']
+
 
 closing='''Actions you can take:
 1. Set dimmer
